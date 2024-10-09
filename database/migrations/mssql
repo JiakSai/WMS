@@ -1,0 +1,20 @@
+CREATE TABLE [dbo].[USERS_PROFILE](
+	[Username] [nvarchar](255) NOT NULL,
+	[PhoneNumber] [nvarchar](20) NULL,
+	[OtpCode] [nvarchar](6) NULL,
+	[OtpExpiry] [datetime] NULL,
+	[EmailAddress] [nvarchar](255) NULL,
+	[Create_datetime] [datetime] NOT NULL,
+	[Name] [nvarchar](200) NULL,
+	[Redirect_url] [nvarchar](255) NULL,
+	[Ticket] [varchar](255) NULL,
+	[TelegramID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[USERS_PROFILE] ADD  CONSTRAINT [DF_Users_profile_create_datetime]  DEFAULT (getdate()) FOR [Create_datetime]
+GO
