@@ -30,6 +30,18 @@ services:
     networks:
       - wms-laravel
 
+  # PHP-FPM Service
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wms-laravel-php-fpm
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+    networks:
+      - wms-laravel
+
 networks:
   wms-laravel:
     driver: bridge

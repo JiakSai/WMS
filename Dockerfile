@@ -2,8 +2,9 @@ FROM php:8.3-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
+    nginx \
     curl \
+    git \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -20,22 +21,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y libzip-dev \
     && docker-php-ext-install zip
 
+# Copy custom Nginx configuration
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-#Install ODBC and MSSQL drivers
+# Install ODBC and MSSQL drivers
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql17 mssql-tools unixodbc-dev && \
     apt-get install -y libgssapi-krb5-2
-
-# Modify the OpenSSL configuration file
-RUN sed -i 's/openssl_conf = openssl_init/openssl_conf = default_conf/' /etc/ssl/openssl.cnf && \
-    echo "\n[ default_conf ]\nssl_conf = ssl_sect\n\n[ssl_sect]\nsystem_default = system_default_sect\n\n[system_default_sect]\nMinProtocol = TLSv1.2\nCipherString = DEFAULT@SECLEVEL=0" >> /etc/ssl/openssl.cnf
-
-# Add sqlcmd to PATH for all users
-RUN echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> /etc/profile.d/mssql-tools.sh && \
-    echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 
 # Install sqlsrv and pdo_sqlsrv extensions
 RUN pecl install sqlsrv pdo_sqlsrv && \
@@ -60,15 +56,9 @@ RUN find /var/www -type f -exec chmod 644 {} \;
 RUN find /var/www -type d -exec chmod 755 {} \;
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/app
 
-# Create a script to fix permissions at runtime
-RUN echo '#!/bin/sh\n\
-chown -R www-data:www-data /var/www\n\
-find /var/www -type f -exec chmod 644 {} \;\n\
-find /var/www -type d -exec chmod 755 {} \;\n\
-chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/app\n\
-exec docker-php-entrypoint "$@"' > /usr/local/bin/docker-php-entrypoint-custom
-RUN chmod +x /usr/local/bin/docker-php-entrypoint-custom
+# Use a custom entrypoint script
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Use the custom entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-php-entrypoint-custom"]
-CMD ["php-fpm"]
+# Start services
+CMD ["/usr/local/bin/entrypoint.sh"]
