@@ -23,6 +23,7 @@ use App\Http\Controllers\Sys\SysOrgaController;
 use App\Http\Controllers\Sys\SysUsrmController;
 use App\Http\Controllers\Sys\Usrm\SysUsrmGrousController;
 use App\Http\Controllers\Sys\Usrm\SysUsrmGrpcsController;
+use App\Http\Controllers\Qms\Ipqa\QmsIpqaTempsController;
 use App\Http\Controllers\Sys\Usrm\SysUsrmUsersController;
 use App\Http\Controllers\Tes\Test\TesTestTeslsController;
 
@@ -55,23 +56,41 @@ Route::middleware(['auth', 'auth.session'])->group(function(){
 
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::get('/select/module/{subModule}', [HomeController::class, 'selectModule'])->name('select-module');
+        Route::prefix('/qmsManagement')->group(function(){
 
-        Route::prefix('/test')->group(function(){
+            Route::prefix('/smt')->group(function (){
 
-            Route::prefix('/tesl')->group(function (){
-
-                Route::get('/', [TesTestTeslsController::class, 'index'])->name('tes.test.tesls.index');
-                Route::post('/show', [TesTestTeslsController::class, 'show'])->name('tes.test.tesls.show');
-                Route::post('/create', [TesTestTeslsController::class, 'create'])->name('tes.test.tesls.create');
-                Route::post('/store', [TesTestTeslsController::class, 'store'])->name('tes.test.tesls.store');
-                Route::post('/edit', [TesTestTeslsController::class, 'edit'])->name('tes.test.tesls.edit');
-                Route::post('/update', [TesTestTeslsController::class, 'update'])->name('tes.test.tesls.update');
-                Route::delete('/destroy', [TesTestTeslsController::class, 'destroy'])->name('tes.test.tesls.destroy');
+                Route::get('/', [QmsIpqaPsmtsController::class, 'index'])->name('qms.ipqa.psmts.index');
+                //Route::post('/show', [SysUsrmUsersController::class, 'show'])->name('sys.usrm.users.show');
+                Route::post('/create', [QmsIpqaPsmtsController::class, 'create'])->name('qms.ipqa.psmts.create');
+                //Route::post('/store', [SysUsrmUsersController::class, 'store'])->name('sys.usrm.users.store');
+                //Route::post('/edit', [SysUsrmUsersController::class, 'edit'])->name('sys.usrm.users.edit');
+                //Route::post('/update', [SysUsrmUsersController::class, 'update'])->name('sys.usrm.users.update');
+                //Route::delete('/destroy', [SysUsrmUsersController::class, 'destroy'])->name('sys.usrm.users.destroy');
+                //Route::post('/activate', [SysUsrmUsersController::class,'activate'])->name('sys.usrm.users.activate');
+                //Route::post('/deactivate', [SysUsrmUsersController::class,'deactivate'])->name('sys.usrm.users.deactivate');
+                //Route::post('reset-password/default', [ResetPasswordController::class, 'resetPasswordDefault'])->name('sys.usrm.users.password-reset-default');
 
             });
 
-        });
+            Route::prefix('/template')->group(function (){
+                
+                Route::get('/', [QmsIpqaTempsController::class, 'index'])->name('qms.ipqa.temps.index');
+                Route::post('/show', [QmsIpqaTempsController::class, 'show'])->name('qms.ipqa.temps.show');
+                Route::post('/create', [QmsIpqaTempsController::class, 'create'])->name('qms.ipqa.temps.create');
 
+                // Route::post('/show/child-data', [SysUsrmGrpcsController::class, 'showChildData'])->name('sys.usrm.grpcs.show-child-data');
+                // Route::post('/create', [SysUsrmGrpcsController::class, 'create'])->name('sys.usrm.grpcs.create');
+                Route::post('/store', [QmsIpqaTempsController::class, 'store'])->name('qms.ipqa.temps.store');
+                // Route::post('/edit', [SysUsrmGrpcsController::class, 'edit'])->name('sys.usrm.grpcs.edit');
+                // Route::post('/update', [SysUsrmGrpcsController::class, 'update'])->name('sys.usrm.grpcs.update');
+                // Route::delete('/destroy', [SysUsrmGrpcsController::class, 'destroy'])->name('sys.usrm.grpcs.destroy');
+                // Route::post('/add/user', [SysUsrmGrpcsController::class, 'addUser'])->name('sys.usrm.grpcs.add-user');
+                // Route::post('/store/user', [SysUsrmGrpcsController::class, 'storeUser'])->name('sys.usrm.grpcs.store-user');
+                // Route::post('/destroy/user', [SysUsrmGrpcsController::class, 'destroyUser'])->name('sys.usrm.grpcs.destroy-user');
+
+            });
+        });
         Route::prefix('/userManagement')->group(function(){
 
             Route::prefix('/userControl')->group(function (){
@@ -163,11 +182,7 @@ Route::middleware(['auth', 'auth.session'])->group(function(){
 
         });
 
-        Route::get('/rfidControl', [RfidController::class, 'index'])->name('rfidControl');
-        Route::post('/rfidControl/getRfidData', [RfidController::class,'getRfidData'])->name('getRfidData');
-        Route::post('/rfidControl/getRfidChildData', [RfidController::class,'getRfidChildData'])->name('getRfidChildData');
-        Route::post('/rfidControl/printRfid', [RfidController::class,'printRfid'])->name('printRfid');
-        Route::post('/rfidControl/printRfidSubmit', [RfidController::class,'printRfidSubmit'])->name('printRfidSubmit');
+
 
         Route::get('/excelControl', [ExcelController::class, 'index'])->name('excelControl');
         Route::post('/excelContol/getExcelData', [ExcelController::class, 'getExcelData'])->name('getExcelData');
@@ -177,6 +192,12 @@ Route::middleware(['auth', 'auth.session'])->group(function(){
         Route::post('/excelControl/editExcelSubmit', [ExcelController::class, 'editExcelSubmit'])->name('editExcelSubmit');
     }); 
 });
+
+Route::get('/rfidControl', [RfidController::class, 'index'])->name('rfidControl');
+Route::post('/rfidControl/getRfidData', [RfidController::class,'getRfidData'])->name('getRfidData');
+Route::post('/rfidControl/getRfidChildData', [RfidController::class,'getRfidChildData'])->name('getRfidChildData');
+Route::post('/rfidControl/printRfid', [RfidController::class,'printRfid'])->name('printRfid');
+Route::post('/rfidControl/printRfidSubmit', [RfidController::class,'printRfidSubmit'])->name('printRfidSubmit');
 
 Route::get('/wms/warehouseControl', [WarehouseController::class, 'index'])->name('warehouseControl');
 Route::post('/wms/warehouseControl/getWarehouseData', [WarehouseController::class,'getWarehouseData'])->name('getWarehouseData');

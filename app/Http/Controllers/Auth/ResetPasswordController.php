@@ -37,15 +37,15 @@ class ResetPasswordController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        if($user->default_organization){
+        if($user->default_organisation){
     
-            session(['organization_id' => $user->default_organization]);
+            session(['organisation_id' => $user->default_organisation]);
 
-            return redirect()->route('home', ['organization' => $user->default_organization]);
+            return redirect()->route('home', ['organisation' => $user->default_organisation]);
         }
     }
 
-    public function resetPasswordDefault(SysOrgaCtrls $organization ,Request $request)
+    public function resetPasswordDefault(SysOrgaCtrls $organisation ,Request $request)
     {
         $user = SysUsrmUsers::where('username', $request->username)->first();
 

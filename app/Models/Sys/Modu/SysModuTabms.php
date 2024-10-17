@@ -16,7 +16,7 @@ class SysModuTabms extends Model
         'main_group',
         'sub_group',
         'route',
-        'warehouse_id',
+        'organisation_id',
         'created_by',
         'updated_by',
         'is_active'

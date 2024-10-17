@@ -18,9 +18,7 @@
 <body>
 
 <div id="app" class="app app-sidebar-collapsed">
-        <x-topbar :warehouseName="$warehouse->name" />
-        <x-slidebar />
-
+    
         <button class="app-sidebar-mobile-backdrop" data-toggle-target=".app"
             data-toggle-class="app-sidebar-mobile-toggled"></button>
         <div id="content" class="app-content">

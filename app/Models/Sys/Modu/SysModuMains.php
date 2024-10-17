@@ -14,7 +14,7 @@ class SysModuMains extends Model
         'name',
         'code',
         'icon',
-        'warehouse_id',
+        'organisation_id',
         'created_by',
         'updated_by',
         'is_active'

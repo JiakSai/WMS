@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Blueprint::macro('commonFields', function () {
-            $this->unsignedBigInteger('organization_id')->nullable()->comment('Organization ID');
+            $this->unsignedBigInteger('organisation_id')->nullable()->comment('Organization ID');
             $this->timestamp('created_at')->nullable()->comment('Created Time');
             $this->string('created_by',200)->nullable()->comment('Created By');
             $this->timestamp('updated_at')->nullable()->comment('Updated Time');
