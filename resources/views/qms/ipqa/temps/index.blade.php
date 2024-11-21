@@ -17,8 +17,8 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Date Uploaded</th>
-                <th>Created By</th>
-                <th>Updated By</th>
+                <th>Categories</th>
+                <th>Status</th>
                 <th>File Name</th>
                 <th class="text-center">Action</th>
             </tr>
@@ -110,10 +110,10 @@
                     data: 'date_upload'
                 },
                 {
-                    data: 'created_by'
+                    data: 'categories'
                 },
                 {
-                    data: 'updated_by'
+                    data: 'is_active'
                 },
                 {
                     data: 'file_name'
@@ -124,18 +124,19 @@
 
 
                     mRender: function(data, type, row) {
+
                         var id = row['id'];
                         var isActive = row['is_active'] === 'Active';
                         var actionText = isActive ? 'Deactivate' : 'Activate';
-                        var actionIcon = isActive ? 'bi bi-person-fill-x' :
-                            'bi bi-person-check-fill';
+                        var actionIcon = isActive ? 'bi bi-person-fill-x' : 'bi bi-person-check-fill';
                         var actionFunction = isActive ? 'btnDeactivate' : 'btnActivate';
 
                         return '<center><div class="dropdown">'    
                         +'<button class="btn dt-buttons btn-dark btn-sm me-1 pt-0 pb-0 dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="handleClick(this)">'    
                         +'<i class="bi bi-list"></i> Menu'   
                         +'</button>'   
-                        +'<ul class="dropdown-menu z-1">'       
+                        +'<ul class="dropdown-menu z-1">' 
+                        +'<li><a href="#" class="dropdown-item" onClick="btnDownload(\'' +  id +'\')"><i class="bi bi-download"></i> Download</a></li>'
                         +'<li><a href="#" class="dropdown-item" onClick="btnRemove(\'' +  id +'\')"><i class="bi bi-trash-fill"></i> Delete</a></li>'
                         +'<li><a href="#" class="dropdown-item" onClick="' + actionFunction + '(\'' + id + '\')"><i class="' + actionIcon + '"></i> ' +  actionText + '</a></li>'
                         +'</ul>'    
@@ -144,7 +145,6 @@
                 },
             ],
         });
-
         $(window).trigger('resize');
     });
 
@@ -160,7 +160,7 @@
     function btnRemove(id) {
         $.ajax({
             type: "DELETE",
-            url: '{{route('sys.modu.mains.destroy', ['organisation' => $organisation->id])}}',
+            url: '{{route('qms.ipqa.temps.destroy', ['organisation' => $organisation->id])}}',
             dataType: 'json',
             data: { 
                 id: id,
@@ -183,7 +183,7 @@
     function btnActivate(id){
         $.ajax({
             method: "POST",
-            url : '{{route('sys.modu.mains.activate', ['organisation' => $organisation->id])}}',
+            url : '{{route('qms.ipqa.temps.activate', ['organisation' => $organisation->id])}}',
             dataType: 'json',
             data:{
                 id: id,
@@ -206,7 +206,7 @@
     function btnDeactivate(id){
         $.ajax({
             method: "POST",
-            url : '{{route('sys.modu.mains.deactivate', ['organisation' => $organisation->id])}}',
+            url : '{{route('qms.ipqa.temps.deactivate', ['organisation' => $organisation->id])}}',
             dataType: 'json',
             data:{
                 id: id,

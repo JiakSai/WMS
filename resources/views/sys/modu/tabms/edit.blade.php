@@ -1,74 +1,60 @@
-<link href="{{asset('css/bootstrapicons-iconpicker.css')}}"  rel="stylesheet">
-<script src="{{asset('js/bootstrapicon-iconpicker.min.js')}}"></script>
-
 <div class="modal-header">
-    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Module</h1>
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Tab</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form id="addForm">
-    <div class="modal-body">
-        <div class="mb-3 row">
+    <div class="modal-body" style="max-height: calc(100vh - 200px);overflow-y: auto;">
+        <div class="mb-3 row" id="formContent">
             <div class="row mb-3">
                 <label class="col-sm-3 col-form-label">Main Module Group</label>
                 <div class="col-sm-9">
-                    <select class="form-select" name="group" data-placeholder="Select Warehouse">
-                        <option value="" selected disabled>Select Group</option>
-                        @foreach($groups as $group)
-                            <option value="{{ $group->id }}" 
-                                @if($group->id == $selectedGroup) selected @endif>
-                                {{ $group->name }}
-                            </option>
-                        @endforeach
+                    <div class="col-sm-9">
+                        <select class="form-select" name="mainGroupDisplay" disabled>
+                            <option value="{{ $selectedMainGroup->id }}" selected>{{ $selectedMainGroup->name }}</option>
+                        </select>
+                        <input type="hidden" name="mainGroup" value="{{ $selectedMainGroup->id }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Sub Module Group</label>
+                <div class="col-sm-9">
+                    <select class="form-select" name="subGroupDisplay" disabled>
+                        <option value="{{ $selectedSubGroup->id }}" selected>{{ $selectedSubGroup->name }}</option>
                     </select>
+                    <input type="hidden" name="subGroup" value="{{ $selectedSubGroup->id }}">
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Module Name</label>
+                <label class="col-sm-3 col-form-label">Tab Name</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="name" value="{{ $name}}">
-                    <input type="hidden" name="id" value="{{ $id }}">
+                    <input type="text" class="form-control" name="name" value="{{ $tabModule->name}}">
+                    <input type="hidden" name="id" value="{{ $tabModule->id }}">
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Description</label>
+                <label class="col-sm-3 col-form-label">Tab Code</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="description" value="{{ $description }}">
+                    <input type="text" class="form-control text-lowercase" name="code" value="{{ $tabModule->code }} " readonly>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-3 col-form-label">Route</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="route" value="{{ $route }}">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Mobile</label>
-                <div class="col-sm-9">
-                    <div class="form-check form-switch pt-1">
-                        <input type="checkbox" class="form-check-input" name="mobile" role="switch" id="flexSwitchCheckDefault" {{$checked}}>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3" style="padding-bottom:70px">
-                <label class="col-sm-3 col-form-label">Icon</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control iconpicker" name="icon" value="{{ $icon }}" aria-label="Icone Picker" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" name="route" value=" {{ $tabModule->route }}" readonly>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal-footer d-flex">
-        <button type="submit" class="btn btn-primary">Submit
+        <button type="submit" class="btn btn-primary" id="submitButton">Submit
             <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
         </button>
         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
     </div>
 </form>
 
-<script src="{{asset('js/multiSelect.js')}}"></script>
-
 <script>
-
     $("#addForm").submit(function(event) {
         // Prevent the default form submission
         event.preventDefault();
@@ -78,7 +64,6 @@
         let spinner = submitButton.find('.spinner-border');
         spinner.removeClass('d-none');
         submitButton.prop('disabled', true);
-
 
         let formDataArray = $(this).serializeArray();
         let formData = {};
@@ -98,7 +83,7 @@
 
         $.ajax({
             method: "POST",
-            url: '{{ route('editSubModuleSubmit', ['warehouse' => $warehouse->id]) }}',
+            url: '{{ route('sys.modu.tabms.update', ['organisation' => $organisation->id]) }}',
             data: formData,
             success: function(d) {
                 // Hide the spinner
@@ -106,13 +91,15 @@
                 submitButton.prop('disabled', false);
 
                 if (d.status === 2) { 
-                        $("#modal").modal('hide');
-                        subDataTable.ajax.reload();
-                        toast(2, d.message);
-                    } else if (d.status === 1) {
-                        let errorMessages = d.errors.map(error => `Error: ${error}`).join('<br>');
-                        toast(1, errorMessages);
-                    }
+
+                    $("#modal").modal('hide');
+                    tabDataTable.ajax.reload();
+                    toast(2, d.message);
+
+                } else if (d.status === 1) {
+                    let errorMessages = d.errors.map(error => `Error: ${error}`).join('<br>');
+                    toast(1, errorMessages);
+                }
             },
             error: function(xhr, status, error) {
                 // Hide the spinner
@@ -122,9 +109,5 @@
                 toast(1,"Error:", xhr.status, status, error);
             }
         });
-    });
-
-    $(function(){
-        $('.iconpicker').iconpicker();
     });
 </script>

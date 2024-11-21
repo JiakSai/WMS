@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: wms-laravel
+    image: wms-laravel-image
     container_name: wms-laravel
     restart: unless-stopped
     working_dir: /var/www
@@ -23,20 +23,6 @@ services:
     volumes:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
-    networks:
-      - wms-laravel
-
-  db:
-    image: mysql:8.0
-    container_name: wms-laravel-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: wms
-      MYSQL_USER: huiden
-      MYSQL_PASSWORD: P@ssw0rd
-      MYSQL_ROOT_PASSWORD: P@ssw0rd
-    volumes:
-      - dbdata:/var/lib/mysql
     networks:
       - wms-laravel
 

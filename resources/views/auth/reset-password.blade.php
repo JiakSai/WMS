@@ -37,7 +37,7 @@
                     <table class="table table-borderless">
                         <thead>
                             <tr>
-                                <th scope="col" colspan="3"><img src="{{asset('img/company_2.png')}}" alt=""
+                                <th scope="col" colspan="3"><img src="{{asset('img/eg_logo.png')}}" alt=""
                                         class="card-img-top" /></th>
                             </tr>
                             <form method="POST" action="{{ route('password.update') }}" id="ResetPasswordForm">

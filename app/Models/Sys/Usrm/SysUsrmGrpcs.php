@@ -13,7 +13,7 @@ class SysUsrmGrpcs extends Model
 
     protected $fillable = [
         'name',
-        'organization_id',
+        'organisation_id',
         'created_by',
         'updated_by',
     ];

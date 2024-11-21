@@ -227,17 +227,54 @@ class SysModuTabmsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
+    public function edit(SysOrgaCtrls $organisation, Request $request)
+    {  
+        $tabModule = SysModuTabms::find($request->id);
 
+        if(!$tabModule)
+        {
+            return response()->json(['status' => 1, 'message' => 'Tab Module not found']);
+        }
+
+        $selectedMainGroup = SysModuMains::find($tabModule->main_group);
+
+        $selectedSubGroup = SysModuSubms::find($tabModule->sub_group);
+
+        $data = view('sys.modu.tabms.edit', compact('tabModule', 'selectedMainGroup', 'selectedSubGroup', 'organisation'))->render();
+
+        return response()->json(['status'=> 2 ,'data' => $data]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SysOrgaCtrls $organisation, Request $request)
     {
-    
+        $validate = Validator::make($request->all(), [
+            'mainGroup' => 'required|exists:sys_modu_mains,id',
+            'subGroup' => 'required|exists:sys_modu_subms,id',
+            'name' => 'required',
+            'route' => 'required',
+            'code' => 'required|string|unique:sys_modu_tabms,code,' . $request->id,
+        ]);
+
+        if($validate->fails()){
+            $errors = $validate->errors()->all();
+            return response()->json(['status'=> 1, 'errors' => $errors]);
+        }
+
+        $tabModule = SysModuTabms::find($request->id);
+
+        if(!$tabModule){
+            return response()->json(['status' => 1, 'message' => 'Sub Module not found']);
+        }
+
+        SysModuTabms::where('id', $tabModule->id)->update([
+            'name' => $request->name,
+            'updated_by' => Auth::user()->name,
+        ]);
+
+        return response()->json(['status' => 2, 'message' => 'Sub Module updated successfully']);
     }
 
     /**

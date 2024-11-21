@@ -2,23 +2,29 @@
 <script src="{{asset('js/bootstrapicon-iconpicker.min.js')}}"></script>
 
 <div class="modal-header">
-    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Module</h1>
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Main Module</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <form id="addForm">
     <div class="modal-body">
         <div class="mb-3 row">
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Module Name</label>
+                <label class="col-sm-3 col-form-label">Main Module Name</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control" name="name" value="{{ $name}}">
-                    <input type="hidden" name="id" value="{{ $id }}">
+                    <input type="text" class="form-control" name="name" value="{{ $mainModule->name }}">
+                    <input type="hidden" name="id" value="{{ $mainModule->id }}">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Main Module Code</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control text-lowercase" name="code" minlength="3" maxlength="3" value="{{ $mainModule->code }}" readonly> 
                 </div>
             </div>
             <div class="row mb-3" style="padding-bottom:70px">
                 <label class="col-sm-3 col-form-label">Icon</label>
                 <div class="col-sm-9">
-                    <input type="text" class="form-control iconpicker" name="icon" value="{{ $icon }}" aria-label="Icone Picker" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control iconpicker" name="icon" value="{{ $mainModule->icon }}" aria-label="Icone Picker" aria-describedby="basic-addon1">
                 </div>
             </div>
         </div>
@@ -34,7 +40,6 @@
 <script src="{{asset('js/multiSelect.js')}}"></script>
 
 <script>
-
     $("#addForm").submit(function(event) {
         // Prevent the default form submission
         event.preventDefault();
@@ -63,7 +68,7 @@
 
         $.ajax({
             method: "POST",
-            url: '{{ route('editMainModuleSubmit', ['organisation' => $organization->id]) }}',
+            url: '{{ route('sys.modu.mains.update', ['organisation' => $organisation->id]) }}',
             data: formData,
             success: function(d) {
 

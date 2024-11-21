@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'organisation' => App\Http\Middleware\OrganisationMiddleware::class,
+            'mainModulePermission' => App\Http\Middleware\MainModulePermission::class,
         ]);
 
         $middleware->redirectTo(function (Request $request) {

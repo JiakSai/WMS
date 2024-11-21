@@ -17,6 +17,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Code</th>
+                <th>Icon</th>
                 <th>Created By</th>
                 <th>Updated By</th>
                 <th>Status</th>
@@ -110,6 +111,12 @@
                     data: 'code'
                 },
                 {
+                    data: 'icon', 
+                    render: function(data, type, row) {
+                        return '<i class="' + data + '"></i>';
+                    }
+                },
+                {
                     data: 'created_by'
                 },
                 {
@@ -135,7 +142,8 @@
                         +'<button class="btn dt-buttons btn-dark btn-sm me-1 pt-0 pb-0 dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" onclick="handleClick(this)">'    
                         +'<i class="bi bi-list"></i> Menu'   
                         +'</button>'   
-                        +'<ul class="dropdown-menu z-1">'       
+                        +'<ul class="dropdown-menu z-1">'
+                        +'<li><a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal" onclick="modal(\'' + '{{ route('sys.modu.mains.edit', ['organisation' => $organisation->id]) }}' + '\', \'' + id + '\')"><i class="bi bi-pencil-square"></i> Edit</a></li>'          
                         +'<li><a href="#" class="dropdown-item" onClick="btnRemove(\'' +  id +'\')"><i class="bi bi-trash-fill"></i> Delete</a></li>'
                         +'<li><a href="#" class="dropdown-item" onClick="' + actionFunction + '(\'' + id + '\')"><i class="' + actionIcon + '"></i> ' +  actionText + '</a></li>'
                         +'</ul>'    

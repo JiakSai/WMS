@@ -146,9 +146,9 @@
                                                             data-bs-container="body"
                                                             data-bs-title="Cover 2">&nbsp;</a>
                                             </div>
-                                            <!-- <div class="app-theme-cover-item">
+                                            <div class="app-theme-cover-item">
                                                     <a href="javascript:;" class="app-theme-cover-link"
-                                                            style="background-image: url(/inforln/assets/img/cover/cover-thumb-3.jpg);"
+                                                            style="background-image: url('{{asset('img/cover/101.jpg')}}');"
                                                             data-theme-cover-class="bg-cover-3"
                                                             data-toggle="theme-cover-selector"
                                                             data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -157,7 +157,7 @@
                                             </div>
                                             <div class="app-theme-cover-item">
                                                     <a href="javascript:;" class="app-theme-cover-link"
-                                                            style="background-image: url(/inforln/assets/img/cover/cover-thumb-4.jpg);"
+                                                            style="background-image: url('{{asset('img/cover/102.jpg')}}');"
                                                             data-theme-cover-class="bg-cover-4"
                                                             data-toggle="theme-cover-selector"
                                                             data-bs-toggle="tooltip" data-bs-trigger="hover"
@@ -166,13 +166,13 @@
                                             </div>
                                             <div class="app-theme-cover-item">
                                                     <a href="javascript:;" class="app-theme-cover-link"
-                                                            style="background-image: url(/inforln/assets/img/cover/cover-thumb-5.jpg);"
+                                                            style="background-image: url('{{asset('img/cover/GlistenKnight.jpg')}}');"
                                                             data-theme-cover-class="bg-cover-5"
                                                             data-toggle="theme-cover-selector"
                                                             data-bs-toggle="tooltip" data-bs-trigger="hover"
                                                             data-bs-container="body"
                                                             data-bs-title="Cover 5">&nbsp;</a>
-                                            </div> -->
+                                            </div>
                                     </div>
                             </div>
                             <div class="card-arrow">

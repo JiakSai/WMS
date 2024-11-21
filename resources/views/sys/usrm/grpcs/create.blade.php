@@ -1,3 +1,5 @@
+<link href="{{ asset('css/multiSelect.css') }}" rel="stylesheet">
+
 <div class="modal-header">
     <h1 class="modal-title fs-5" id="exampleModalLabel">Add User Group</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -11,6 +13,8 @@
                     <input type="text" class="form-control" name="name">
                 </div>
             </div>
+            <label for="dynamic">Dynamic Select</label>
+            <select id="dynamic" name="dynamic"></select>
         </div>
     </div>
     <div class="modal-footer d-flex">
@@ -21,7 +25,48 @@
     </div>
 </form>
 
+<script src="{{ asset('js/multiSelect.js') }}"></script>
+
 <script>
+    new MultiSelect('#dynamic', {
+        data: [
+            {
+                value: 'opt1',
+                text: 'Option 1'
+            },
+            {
+                value: 'opt2',
+                html: '<strong>Option 2 with HTML!</strong>'
+            },
+            {
+                value: 'opt3',
+                text: 'Option 3',
+                selected: true
+            },
+            {
+                value: 'opt4',
+                text: 'Option 4'
+            },
+            {
+                value: 'opt5',
+                text: 'Option 5'
+            }
+        ],
+        placeholder: 'Select an option',
+        search: true,
+        selectAll: false,
+        listAll: false,
+        max: 2,
+        onChange: function(value, text, element) {
+            console.log('Change:', value, text, element);
+        },
+        onSelect: function(value, text, element) {
+            console.log('Selected:', value, text, element);
+        },
+        onUnselect: function(value, text, element) {
+            console.log('Unselected:', value, text, element);
+        }
+    });
     $("#addForm").submit(function(event) {
         // Prevent the default form submission
         event.preventDefault();

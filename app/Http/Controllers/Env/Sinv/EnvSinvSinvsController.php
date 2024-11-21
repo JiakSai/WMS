@@ -128,7 +128,7 @@ class EnvSinvSinvsController extends Controller
         ]);
         Log::info('Query Params: ', ['fromDate' => $fromDate, 'toDate' => $toDate]);
 
-        return response()->json(['error' => 'Unable to fetch data'], 500);
+        return response()->json(['status' => 1, 'error' => 'Unable to fetch data'], 500);
     }
 }
 
@@ -167,7 +167,7 @@ class EnvSinvSinvsController extends Controller
         $csvData = $request->input('csvData');
 
         // Define the file path and name
-        $fileName = 'invoice_data_' . now()->format('Ymd_His') . '.csv';
+        $fileName = 'Invoice_' . now()->format('Ymd_His') . '.csv';
         $filePath = storage_path("app/public/csv_files/{$fileName}");
 
         // Ensure the directory exists
@@ -181,10 +181,10 @@ class EnvSinvSinvsController extends Controller
 
         Log::info("CSV file saved successfully at: " . $filePath);
 
-        return response()->json(['message' => 'CSV file saved successfully'], 200);
+        return response()->json(['status' => 2, 'message' => 'CSV file saved successfully'], 200);
     } catch (\Exception $e) {
         Log::error('Error saving CSV file: ' . $e->getMessage());
-        return response()->json(['message' => 'Failed to save CSV file'], 500);
+        return response()->json(['status' => 1, 'message' => 'Failed to save CSV file'], 500);
     }
 }
 
@@ -220,6 +220,64 @@ class EnvSinvSinvsController extends Controller
 //         return response()->json(['message' => 'Error uploading CSV file via FTP', 'error' => $e->getMessage()]);
 //     }
 // }
+// public function saveFTP(Request $request, SysOrgaCtrls $organisation)
+// {
+//     try {
+//         // Log the start of the process
+//         Log::info('Starting CSV upload to SFTP', ['organisation' => $organisation->name]);
+
+//         // Get the CSV data from the request
+//         $csvData = $request->input('csvData');
+//         Log::info('CSV data received', ['csvDataLength' => strlen($csvData)]);  // Log the length of the CSV data to avoid sensitive information exposure
+
+//         // Generate the file name and file path
+//         $fileName = 'Invoice' . now()->format('Ymd_His') . '.csv';
+//         $filePath = storage_path('app/' . $fileName);
+//         Log::info('Generated file path', ['filePath' => $filePath]);
+
+//         // Save the CSV data temporarily to the server
+//         file_put_contents($filePath, $csvData);
+//         Log::info('CSV data written to temporary file', ['fileName' => $fileName]);
+
+//         // Check if the file has been created successfully
+//         if (file_exists($filePath)) {
+//             // Log before attempting to upload to SFTP
+//             Log::info('Preparing to upload CSV file to SFTP', ['fileName' => $fileName]);
+
+//             // Upload the file to the SFTP server
+//             $disk = Storage::disk('sftp');
+//             $uploaded = $disk->put($fileName, fopen($filePath, 'r'));
+       
+//             if ($uploaded) {
+//                 // Log successful upload
+//                 Log::info('CSV file successfully uploaded to SFTP', ['fileName' => $fileName]);
+                
+//                 // Delete the local file after upload
+//                 unlink($filePath);
+//                 Log::info('Temporary local file deleted', ['fileName' => $fileName]);
+
+//                 return response()->json(['message' => 'CSV uploaded to SFTP successfully.']);
+//             } else {
+//                 // Log failure to upload
+//                 throw new Exception("Failed to upload CSV to SFTP.");
+//             }
+//         } else {
+//             // Log failure if file does not exist
+//             throw new Exception("Temporary file was not created successfully.");
+//         }
+//     } catch (Exception $e) {
+//         // Log detailed error with exception
+//         Log::error('Error uploading CSV to SFTP: ' . $e->getMessage(), [
+//             'exception' => $e,
+//             'fileName' => isset($fileName) ? $fileName : 'N/A',  // Ensure fileName is logged even if the exception occurs before it's set
+//             'csvDataLength' => isset($csvData) ? strlen($csvData) : 'N/A', // Log length to track data size
+//             'organisation' => isset($organisation->name) ? $organisation->name : 'N/A',
+//         ]);
+//         return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+//     }
+// }
+
+
 public function saveFTP(Request $request, SysOrgaCtrls $organisation)
 {
     try {
@@ -231,7 +289,7 @@ public function saveFTP(Request $request, SysOrgaCtrls $organisation)
         Log::info('CSV data received', ['csvDataLength' => strlen($csvData)]);  // Log the length of the CSV data to avoid sensitive information exposure
 
         // Generate the file name and file path
-        $fileName = 'Invoice' . now()->format('Ymd_His') . '.csv';
+        $fileName = 'Invoice_' . now()->format('Ymd_His') . '.csv';
         $filePath = storage_path('app/' . $fileName);
         Log::info('Generated file path', ['filePath' => $filePath]);
 
@@ -244,19 +302,23 @@ public function saveFTP(Request $request, SysOrgaCtrls $organisation)
             // Log before attempting to upload to SFTP
             Log::info('Preparing to upload CSV file to SFTP', ['fileName' => $fileName]);
 
-            // Upload the file to the SFTP server
+            // Define the SFTP path to '/Share/eInvoice/Import/TestEnv'
+            $sftpPath = 'Invoice/' . $fileName;
+            // $sftpPath = 'TestEnv/' . $fileName; // Upload to /Share/eInvoice/Import/TestEnv
+
+            // Upload the file to the SFTP server with the modified path
             $disk = Storage::disk('sftp');
-            $uploaded = $disk->put($fileName, fopen($filePath, 'r'));
+            $uploaded = $disk->put($sftpPath, fopen($filePath, 'r'));
 
             if ($uploaded) {
                 // Log successful upload
-                Log::info('CSV file successfully uploaded to SFTP', ['fileName' => $fileName]);
-                
+                Log::info('CSV file successfully uploaded to SFTP', ['sftpPath' => $sftpPath]);
+
                 // Delete the local file after upload
                 unlink($filePath);
                 Log::info('Temporary local file deleted', ['fileName' => $fileName]);
 
-                return response()->json(['message' => 'CSV uploaded to SFTP successfully.']);
+                return response()->json(['status' => 2, 'message' => 'CSV uploaded to SFTP successfully.']);
             } else {
                 // Log failure to upload
                 throw new Exception("Failed to upload CSV to SFTP.");
@@ -273,49 +335,9 @@ public function saveFTP(Request $request, SysOrgaCtrls $organisation)
             'csvDataLength' => isset($csvData) ? strlen($csvData) : 'N/A', // Log length to track data size
             'organisation' => isset($organisation->name) ? $organisation->name : 'N/A',
         ]);
-        return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        return response()->json(['status' => 1, 'message' => 'An error occurred: ' . $e->getMessage()], 500);
     }
 }
-// public function saveFTP(Request $request, SysOrgaCtrls $organisation)
-// {
-//     try {
-//         // Log the start of the process
-//         Log::info('Starting CSV upload to SFTP', ['organisation' => $organisation->name]);
-
-//         // Get the CSV data from the request
-//         $csvData = $request->input('csvData');
-//         Log::info('CSV data received', ['csvDataLength' => strlen($csvData)]);
-
-//         // Generate the file name for the SFTP path
-//         $fileName = 'Invoice' . now()->format('Ymd_His') . '.csv';
-//         Log::info('Generated file name', ['fileName' => $fileName]);
-
-//         // Upload the file to the SFTP server directly
-//         $disk = Storage::disk('sftp');
-//         $uploaded = $disk->put($fileName, $csvData);
-
-//         if ($uploaded) {
-//             // Log successful upload
-//             Log::info('CSV file successfully uploaded to SFTP', ['fileName' => $fileName]);
-
-//             return response()->json(['message' => 'CSV uploaded to SFTP successfully.']);
-//         } else {
-//             // Log failure to upload
-//             throw new Exception("Failed to upload CSV to SFTP.");
-//         }
-//     } catch (Exception $e) {
-//         // Log detailed error with exception
-//         Log::error('Error uploading CSV to SFTP: ' . $e->getMessage(), [
-//             'exception' => $e,
-//             'fileName' => isset($fileName) ? $fileName : 'N/A',
-//             'csvDataLength' => isset($csvData) ? strlen($csvData) : 'N/A',
-//             'organisation' => isset($organisation->name) ? $organisation->name : 'N/A',
-//         ]);
-//         return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
-//     }
-// }
-
-
 
 
 

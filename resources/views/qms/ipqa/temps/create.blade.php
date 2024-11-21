@@ -20,6 +20,25 @@
                     <input class="form-control" type="file" id="formFile" name="fileToUpload">
                 </div>
             </div>
+            <!-- New Remarks Input -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Remarks</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="remarks" placeholder="Enter remarks">
+                </div>
+            </div>
+
+            <!-- New Categories Select Box -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Categories</label>
+                <div class="col-sm-9">
+                    <select class="form-select" name="categories" required>
+                        <option value="" disabled>Select Category</option>
+                        <option value="box_build">Box Build</option>
+                        <option value="smt">SMT</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer d-flex">
@@ -76,7 +95,6 @@
 
                 if (d.status === 2) { 
                         $("#modal").modal('hide');
-                        mainDataTable.ajax.reload();
                         toast(2, d.message);
                     } else if (d.status === 1) {
                         let errorMessages = d.errors.map(error => `Error: ${error}`).join('<br>');

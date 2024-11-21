@@ -88,6 +88,7 @@ class SysModuMainsController extends Controller
                     'id' => $item->id,
                     'name' => $item->name,
                     'code' => $item->code,
+                    'icon' => $item->icon,
                     'created_by' => $item->created_by,
                     'updated_by' => $item->updated_by,
                     'is_active' => $item->is_active ? 'Active' : 'Inactive',
@@ -109,51 +110,46 @@ class SysModuMainsController extends Controller
      */
     public function edit(SysOrgaCtrls $organisation, Request $request)
     {
-        // $mainModule = SysModuMains::where('id', $request->id)->first();
+        $mainModule = SysModuMains::find($request->id);
 
-        // if(!$mainModule){
-        //     return response()->json(['status' => 1, 'message' => 'Main Module not found']);
-        // }
+        if(!$mainModule){
+            return response()->json(['status' => 1, 'message' => 'Main Module not found']);
+        }
 
-        // $name = $mainModule->name;
-        // $icon = $mainModule->icon;
-        // $id = $mainModule->id;
+        $data = view('sys.modu.mains.edit', compact('mainModule', 'organisation'))->render();
 
-        // $data = view('sys.modu.main.edit', compact('name', 'icon', 'id', 'organisation'))->render();
-
-        // return response()->json(['status'=> 2 ,'data' => $data]);
+        return response()->json(['status'=> 2 ,'data' => $data]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SysOrgaCtrls $organisation ,Request $request)
     {
-        // $validate = Validator::make($request->all(), [
-        //     'name' => 'required|unique:sys_modu_mains,name,' . $request->id,
-        //     'icon' => 'required', 
-        // ]);
+        $validate = Validator::make($request->all(), [
+            'name' => 'required|unique:sys_modu_mains,name,' . $request->id,
+            'code' => 'required|unique:sys_modu_mains,code,' . $request->id,
+            'icon' => 'required', 
+        ]);
 
-        // if($validate->fails()){
-        //     $errors = $validate->errors()->all();
-        //     return response()->json(['status'=> 1, 'errors' => $errors]);
-        // }
+        if($validate->fails()){
+            $errors = $validate->errors()->all();
+            return response()->json(['status'=> 1, 'errors' => $errors]);
+        }
 
-        // $mainModule = SysModuMains::where('id', $request->id)->first();
-        // $old_data = $mainModule->toArray();
+        $mainModule = SysModuMains::find($request->id);
 
-        // if(!$mainModule){
-        //     return response()->json(['status' => 1, 'message' => 'Module not found']);
-        // }
+        if(!$mainModule){
+            return response()->json(['status' => 1, 'message' => 'Module not found']);
+        }
 
-        // $mainModule->update([
-        //     'name' => $request->name,
-        //     'icon' => $request->icon,
-        //     'updated_by' => Auth::user()->name,
-        // ]);
+        SysModuMains::where('id', $mainModule->id)->update([
+            'name' => $request->name,
+            'icon' => $request->icon,
+            'updated_by' => Auth::user()->name,
+        ]);
 
-        // return response()->json(['status' => 2, 'message' => 'Main Module updated successfully']);
-
+        return response()->json(['status' => 2, 'message' => 'Main Module updated successfully']);
     }
 
     /**

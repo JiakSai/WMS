@@ -42,7 +42,7 @@ class SysUsrmGrpcsController extends Controller
             return response()->json(['status' => 1, 'errors' => $errors]);
         }
 
-        $group = SysUsrmGrpcs::create([
+        SysUsrmGrpcs::create([
             'name' => $request->name,
             'created_by' => Auth::user()->name,
             'updated_by' => Auth::user()->name,

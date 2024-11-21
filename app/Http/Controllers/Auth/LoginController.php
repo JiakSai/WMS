@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Sys\Modu\SysModuTabms;
 use App\Models\Sys\Orga\SysOrgaCtrls;
 use App\Models\Sys\Usrm\SysUsrmUsers;
+use App\Models\Wms\Role\WmsRoleAsgns;
+use App\Models\Wms\Role\WmsRolePerms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -50,7 +56,54 @@ class LoginController extends Controller
             }
           
             Auth::logoutOtherDevices($credentials['password']);
-    
+
+            // Retrieve main module permissions
+            $mainModuleIds = $user->main_modules_permission ?? [];
+
+            // Store main modules in session
+            $request->session()->put('main_modules_permission', $mainModuleIds);
+
+            // // Retrieve tab modules based on main modules
+            // $tabModules = SysModuTabms::whereIn('main_group', $mainModuleIds)->get();
+
+            // // Extract tab module IDs
+            // $tabModuleIds = $tabModules->pluck('id')->toArray();
+
+            // // Retrieve permissions based on tab modules
+            // $permissions = Permission::whereIn('tab_module', $tabModuleIds)->get();
+
+            // // Extract unique role IDs from permissions
+            // $roleIds = $permissions->pluck('role')->flatten()->unique()->toArray();
+
+            // // Retrieve roles based on role IDs
+            // $roles = Role::whereIn('id', $roleIds)->get();
+
+            // // Extract unique user IDs from roles
+            // $userIdsFromRoles = $roles->pluck('user_id')->flatten()->unique()->toArray();
+
+            // // Get the authenticated user's ID
+            // $authenticatedUserId = $user->id;
+
+            // if (in_array($authenticatedUserId, $userIdsFromRoles)) {
+            //     // Filter roles that include the authenticated user
+            //     $userRoles = $roles->filter(function ($role) use ($authenticatedUserId) {
+            //         return in_array($authenticatedUserId, $role->user_id);
+            //     });
+
+            //     // Extract role IDs
+            //     $userRoleIds = $userRoles->pluck('id')->toArray();
+
+            //     // Store role IDs in session
+            //     $request->session()->put('user_role_ids', $userRoleIds);
+
+            //     // Optionally, attach roles to the user instance
+            //     // (Requires defining a relationship in the SysUsrmUsers model)
+            //     $user->roles = $userRoles;
+            // } else {
+            //     // User does not have the required roles
+            //     $request->session()->put('user_role_ids', []);
+            // }
+
             $intendedUrl = session('url.intended');
             
             if ($intendedUrl) {

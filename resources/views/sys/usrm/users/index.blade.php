@@ -73,7 +73,7 @@
                             text: '<i class="fa fa-plus-circle me-1"></i> Add',
                             className: 'btn btn-outline-theme',
                             action: function(e, dt, node, config) {
-                                $('#modal').modal('show');
+                              $('#modal').modal('show');  
                                 modal('{{ route('sys.usrm.users.create', ['organisation' => $organisation->id]) }}',
                                     2);
                             }

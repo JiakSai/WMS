@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('version_name', 255)->unique();      // String field for version_name
             $table->string('file_name', 255);                   // String field for file_name
             $table->string('folder_key', 255)->unique()->comment('Folder Location');
+            $table->string('categories', 255); 
+            $table->string('remark', 200); 
             $table->string('status', 255);                      // String field for status
         });
     }

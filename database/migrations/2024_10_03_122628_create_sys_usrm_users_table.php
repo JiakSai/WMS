@@ -24,6 +24,8 @@ return new class extends Migration
             $table->integer('telegram_id')->nullable()->comment('Telegram ID');
             $table->unsignedBigInteger('default_organisation')->comment('Default Organisation');
             $table->unsignedBigInteger('group')->comment('User Group');
+            $table->unsignedBigInteger('role')->comment('Role');
+            $table->json('main_modules_permission')->nullable()->comment('User Main Module Permission');
             $table->boolean('is_active')->default('1')->comment('Mark is User Active');
             $table->timestamps();
         });

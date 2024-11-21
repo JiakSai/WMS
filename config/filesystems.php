@@ -56,6 +56,19 @@ return [
             'throw' => false,
         ],
 
+ 
+'sftp' => [
+    'driver' => 'sftp',
+    'host' => '168.168.190.248',
+    'username' => 'administrator',
+    'password' => 'D0m@!nStr0ng',
+    'root' => '/Share/eInvoice/Import',
+    'port' => 22, // default SFTP port
+    'timeout' => 30, // adjust as needed
+    'debug' => true,
+],
+
+
     ],
 
     /*

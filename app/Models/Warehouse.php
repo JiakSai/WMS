@@ -13,8 +13,7 @@ class Warehouse extends Model
         'name',
         'warehouse_id',
         'created_by',
-        'updated_by',
-        'is_deleted'
+        'updated_by'
     ];
 
     public function users(){

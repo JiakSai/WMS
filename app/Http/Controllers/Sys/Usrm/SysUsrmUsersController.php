@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Sys\Usrm;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sys\Modu\SysModuMains;
 use App\Models\Sys\Orga\SysOrgaCtrls;
 use App\Models\Sys\Usrm\SysUsrmGrpcs;
+use App\Models\Sys\Usrm\SysUsrmRoles;
 use App\Models\Sys\Usrm\SysUsrmUsers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,7 +32,11 @@ class SysUsrmUsersController extends Controller
 
         $groups = SysUsrmGrpcs::get();
 
-        return response()->json(['data' => view('sys.usrm.users.create', compact('organisations', 'groups', 'organisation'))->render()]);
+        $roles = SysUsrmRoles::where('organisation_id', $organisation->id)->get();
+
+        $mainModules = SysModuMains::get();
+
+        return response()->json(['data' => view('sys.usrm.users.create', compact('organisations', 'groups', 'organisation', 'roles', 'mainModules'))->render()]);
     }
 
     /**
@@ -49,7 +55,9 @@ class SysUsrmUsersController extends Controller
             }],
             'telegram_id' => 'sometimes|nullable',
             'default_organisation' => 'required',
-            'group' => 'required|exists:sys_usrm_grpcs,id'
+            'group' => 'required|exists:sys_usrm_grpcs,id',
+            'role' => 'required|exists:sys_usrm_roles,id',
+            'permission' => 'required|array|min:1',
         ], [
             'username.required' => 'Employee ID empty is not allowed.',
             'username.unique' => 'Employee ID already exists.',
@@ -57,14 +65,15 @@ class SysUsrmUsersController extends Controller
             'email.required' => 'Email empty is not allowed.',
             'email.unique' => 'Email already exists.',
             'default_organisation.required' => 'Please select a default organisation.',
-            'group.required' => 'Please select a group.'
+            'group.required' => 'Please select a group.',
+            'role.required' => 'Please select a role.'
         ]);
 
         if ($validate->fails()) {
             $errors = $validate->errors()->all();
             return response()->json(['status' => 1, 'errors' => $errors]);
         }
-
+        
         $user = SysUsrmUsers::create([
             'username' => $request->username,
             'name' => $request->name,
@@ -73,7 +82,9 @@ class SysUsrmUsersController extends Controller
             'email_address' => $request->email,
             'telegram_id' => $request->telegram_id, 
             'group' => $request->group,
+            'role' => $request->role,
             'default_organisation' => $request->organisation[$request->default_organisation],
+            'main_modules_permission' => $request['permission'],
         ]);
 
         if ($request->has('organisation')) {
@@ -146,11 +157,17 @@ class SysUsrmUsersController extends Controller
 
         $defaultOrganisation = SysOrgaCtrls::find($user->default_organisation);
 
+        $mainModules = SysModuMains::get();
+
         $groups = SysUsrmGrpcs::get();
 
-        $selectedGroup = $user->group;
+        $roles = SysUsrmRoles::where('organisation_id', $organisation->id)->get();
 
-        return response()->json(['data' => view('sys.usrm.users.edit', compact('user', 'organisations', 'selectedOrganisations', 'defaultOrganisation', 'groups', 'selectedGroup', 'organisation'))->render()]);
+        $selectedPermissionIds = $user->main_modules_permission ?? [];
+
+        $selectedPermissions = SysModuMains::whereIn('id', $selectedPermissionIds)->pluck('id')->toArray();
+
+        return response()->json(['data' => view('sys.usrm.users.edit', compact('user', 'organisations', 'selectedOrganisations', 'defaultOrganisation', 'groups', 'roles', 'organisation', 'mainModules', 'selectedPermissions'))->render()]);
     }
 
     /**
@@ -169,7 +186,9 @@ class SysUsrmUsersController extends Controller
             }],
             'telegram_id' => 'sometimes|nullable',
             'default_organisation' => 'required',
-            'group' => 'required|exists:sys_usrm_grpcs,id'
+            'group' => 'required|exists:sys_usrm_grpcs,id',
+            'role' => 'required|exists:sys_usrm_roles,id',
+            'permission' => 'required|array|min:1',
         ], [
             'username.required' => 'Employee ID empty is not allowed.',
             'username.unique' => 'Employee ID already exists.',
@@ -177,7 +196,9 @@ class SysUsrmUsersController extends Controller
             'email.required' => 'Email empty is not allowed.',
             'email.unique' => 'Email already exists.',
             'default_organisation.required' => 'Please select a default organisation.',
-            'group.required' => 'Please select a group.'
+            'group.required' => 'Please select a group.',
+            'role.required' => 'Please select a role.'
+            
         ]);
 
         if( $validate->fails() ){
@@ -193,8 +214,12 @@ class SysUsrmUsersController extends Controller
             'email_address' => $request->email,
             'telegram_id' => $request->telegram_id,
             'group' => $request->group,
+            'role' => $request->role,
             'default_organisation' => $request->organisation[$request->default_organisation],
+            'main_modules_permission' => $request['permission'],
         ]);
+
+        // session()->flush();
 
         if ($request->has('organisation')) {
             $timestamp = Carbon::now()->format('Y-m-d H:i:s.u');

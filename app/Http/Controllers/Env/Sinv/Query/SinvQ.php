@@ -52,6 +52,7 @@ class SinvQ
         SELECT 
             'SInvoice' AS DocumentType, 
             '800' + '/' + CONVERT(VARCHAR(50), A.t_tran) + '/' + CONVERT(VARCHAR(50), A.t_idoc) AS InvoiceID, 
+            --'Test-01' as InvoiceID,
             FORMAT(DATEADD(HOUR, 8, A.t_idat), 'MM/dd/yyyy HH:mm:ss') AS DocumentDate, 
             A.t_itbp AS CusCode, 
             CASE 

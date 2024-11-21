@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PHPUnit\Event\Telemetry\System;
 
 class SysModuSubmsController extends Controller
 {
@@ -127,6 +128,7 @@ class SysModuSubmsController extends Controller
                     'name' => $item->name,
                     'code' => $item->code,
                     'group' => $moduleGroup->name,
+                    'icon' => $item->icon,
                     'description' => $item->description,
                     'route' => $item->route,
                     'created_by' => $item->created_by,
@@ -174,25 +176,20 @@ class SysModuSubmsController extends Controller
      */
     public function edit(SysOrgaCtrls $organisation, Request $request)
     {
-        // $module = SysModuSubms::where('id', $request->id)->first();
+        $subModule = SysModuSubms::find($request->id);
 
-        // if(!$module){
-        //     return response()->json(['status' => 1, 'message' => 'Module not found']);
-        // }
+        if(!$subModule)
+        {
+            return response()->json(['status' => 1, 'message' => 'Sub Module not found']);
+        }
 
-        // $name = $module->name;
-        // $description = $module->description;
-        // $route = $module->route;
-        // $checked = $module->mobile === 1 ? 'checked' : '';
-        // $icon = $module->icon;
-        // $id = $module->id;
+        $selectedGroup = SysModuMains::find($subModule->group);
 
-        // $groups = SysModuMains::select('name', 'id')->get();
-        // $selectedGroup = $module->group;
+        $checked = $subModule->mobile === 1 ? 'checked' : '';
 
-        // $data = view('sys.modu.sub.edit', compact('name', 'description', 'route', 'icon', 'checked', 'groups', 'selectedGroup','id', 'organisation'))->render();
+        $data = view('sys.modu.subms.edit', compact('subModule', 'selectedGroup', 'checked', 'organisation'))->render();
 
-        // return response()->json(['status'=> 2 ,'data' => $data]);
+        return response()->json(['status'=> 2 ,'data' => $data]);
     }
 
     /**
@@ -200,37 +197,35 @@ class SysModuSubmsController extends Controller
      */
     public function update(SysOrgaCtrls $organisation, Request $request)
     {
-        // $validate = Validator::make($request->all(), [
-        //     'group' => 'required|exists:main_modules,id',
-        //     'name' => 'required|unique:modules,name,' . $request->id,
-        //     'description' => 'required',
-        //     'route' => 'required',
-        //     'icon' => 'required', 
-        // ]);
+        $validate = Validator::make($request->all(), [
+            'group' => 'required|exists:sys_modu_mains,id',
+            'name' => 'required|unique:sys_modu_subms,name,' . $request->id,
+            'code' => 'required|unique:sys_modu_subms,code,' . $request->id,
+            'description' => 'required',
+            'route' => 'required',
+            'icon' => 'required', 
+        ]);
 
-        // if($validate->fails()){
-        //     $errors = $validate->errors()->all();
-        //     return response()->json(['status'=> 1, 'errors' => $errors]);
-        // }
+        if($validate->fails()){
+            $errors = $validate->errors()->all();
+            return response()->json(['status'=> 1, 'errors' => $errors]);
+        }
 
-        // $module = SysModuSubms::where('id', $request->id)->first();
-        // $old_data = $module->toArray();
+        $subModule = SysModuSubms::find($request->id);
 
-        // if(!$module){
-        //     return response()->json(['status' => 1, 'message' => 'Module not found']);
-        // }
+        if(!$subModule){
+            return response()->json(['status' => 1, 'message' => 'Sub Module not found']);
+        }
 
-        // $module->update([
-        //     'name' => $request->name,
-        //     'description' => $request->description,
-        //     'mobile' => $request->mobile === 'on' ? 1 : 0,
-        //     'route' => $request->route,
-        //     'icon' => $request->icon,
-        //     'group' => $request->group,
-        //     'updated_by' => Auth::user()->name,
-        // ]);
+        SysModuSubms::where('id', $subModule->id)->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'mobile' => $request->mobile === 'on' ? 1 : 0,
+            'icon' => $request->icon,
+            'updated_by' => Auth::user()->name,
+        ]);
 
-        // return response()->json(['status' => 2, 'message' => 'Module updated successfully']);
+        return response()->json(['status' => 2, 'message' => 'Sub Module updated successfully']);
     }
 
     /**
@@ -290,7 +285,7 @@ class SysModuSubmsController extends Controller
     /**
     * Activate the sub module
     */ 
-    public function activate(Request $request)
+    public function activate(SysOrgaCtrls $organisation, Request $request)
     {
         $subModule = SysModuSubms::find($request->id);
 
@@ -308,7 +303,7 @@ class SysModuSubmsController extends Controller
     /**
      * Deactivate the sub module
      */
-    public function deactivate(Request $request)
+    public function deactivate(SysOrgaCtrls $organisation, Request $request)
     {
         $subModule = SysModuSubms::find($request->id);
 

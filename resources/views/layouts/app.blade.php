@@ -2,7 +2,7 @@
 <html lang="en" data-bs-theme="dark" class="bg-cover-1">
 <head>
     <meta charset="utf-8" />
-    <title>SMTT | @yield('title', 'Default Title')</title>
+    <title> @yield('left_title', 'SMTT') | @yield('title', 'Default Title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
@@ -13,7 +13,9 @@
     <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet"> 
     <link href="{{ asset('css/responsive.bootstrap5.min.css') }}" rel="stylesheet"> 
     <link href="{{ asset('css/fixedColumns.bootstrap5.min.css') }}" rel="stylesheet"> 
-    <link href="{{ asset('css/buttons.bootstrap5.min.css') }}" rel="stylesheet"> 
+    <link href="{{ asset('css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
+
+    
     @stack('css')
 </head>
 <body>
@@ -26,9 +28,9 @@
 
         <div id="content" class="app-content">
             @yield('content')
-        
+            {{-- modal-dialog-scrollable --}}
             <div class="modal fade" id="modal" data-bs-backdrop="static">
-                <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content" id="modalContent">
                         <div class="text-center">
                             <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status" >

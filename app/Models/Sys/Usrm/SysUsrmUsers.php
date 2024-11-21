@@ -3,9 +3,11 @@
 namespace App\Models\Sys\Usrm;
 
 use App\Models\Sys\Orga\SysOrgaCtrls;
+use App\Models\Sys\Role\SysRoleAuths;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Session;
 
 class SysUsrmUsers extends Authenticatable
 {
@@ -28,7 +30,9 @@ class SysUsrmUsers extends Authenticatable
         'ticket',
         'telegram_id',
         'group',
+        'role',
         'default_organisation',
+        'main_modules_permission',
         'is_active'
     ];
 
@@ -51,11 +55,14 @@ class SysUsrmUsers extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'main_modules_permission' => 'array', 
         ];
     }
 
-    public function organisations(){
+    public function organisations()
+    {
         return $this->belongsToMany(SysOrgaCtrls::class);
     }
 
+    
 }
