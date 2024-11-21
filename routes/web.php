@@ -338,7 +338,7 @@ Route::middleware(['auth', 'auth.session'])->group(function(){
                 Route::post('/show', [RoleController::class, 'show'])->name('rbp.role.show');
                 Route::post('/create', [RoleController::class, 'create'])->name('rbp.role.create');
                 Route::post('/store', [RoleController::class, 'store'])->name('rbp.role.store');
-                Route::post('/edit', [RoleController::class, 'edit'])->name('rbp.role.edit');
+                Route::post('/edit/{mainModule}', [RoleController::class, 'edit'])->name('rbp.role.edit');
                 Route::post('/update', [RoleController::class, 'update'])->name('rbp.role.update');
                 Route::post('/destroy', [RoleController::class, 'destroy'])->name('rbp.role.destroy');
 
