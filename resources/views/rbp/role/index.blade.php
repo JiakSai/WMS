@@ -118,7 +118,7 @@
                         +'<i class="bi bi-list"></i> Menu'   
                         +'</button>'   
                         +'<ul class="dropdown-menu z-1">'   
-                        +'<a href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#modal" onclick="modal(\'' + '{{ route('rbp.role.edit', ['organisation' => $organisation->id]) }}' + '\', \'' + id + '\')"><i class="bi bi-pencil-square"></i> Edit</a>'    
+                        +'<a href="#" class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#modal" onclick="modal(\'' + '{{ route('rbp.role.edit', ['organisation' => $organisation->id, '']) }}' + '\', \'' + id + '\')"><i class="bi bi-pencil-square"></i> Edit</a>'    
                         +'<li><a href="#" class="dropdown-item" onClick="btnRemove(\'' + id + '\')"><i class="bi bi-trash"></i> Delete</a></li>'    
                         +'</ul>'    
                         +'</div></center>';

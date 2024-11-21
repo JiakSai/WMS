@@ -32,6 +32,9 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $userCounter = 0;
+                            @endphp
                             @if(!empty($selectedUsers))
                                 @foreach($selectedUsers as $selectedUser)
                                     @php $userCounter++; @endphp
@@ -54,6 +57,7 @@
                                 @endforeach
                             @else
                                 <!-- If no selected users, display one empty row -->
+                                @php $userCounter = 1; @endphp
                                 <tr>
                                     <td class="col-md-1" style="padding-top: 15px">1</td>
                                     <td class="col-md-7">
@@ -87,7 +91,6 @@
         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
     </div>
 </form>
-
 <script>
     $(document).ready(function () {
         var userCounter = $("table.user-order-list tbody tr").length || 1;
@@ -106,7 +109,7 @@
             cols += '<td class="col-md-1" style="padding-top: 11px"><a href="#" class="btn btn-dark btn-sm me-1 deleteRow"><i class="bi bi-trash"></i></a></td>';
 
             newRow.append(cols);
-            $("table.user-order-list").append(newRow);
+            $("table.user-order-list tbody").append(newRow);
             updateUserOptions();
         }
 
@@ -168,7 +171,6 @@
         });
 
         $("#roleForm").submit(function(event) {
-            // Prevent the default form submission
             event.preventDefault();
 
             // Show the spinner

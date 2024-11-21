@@ -38,8 +38,10 @@ class RoleController extends Controller
         $role = new Role();
 
         $mainModule = SysModuMains::find($request->id);
+
+        $selectedUsers = [];
         
-        return response()->json(['data' => view('rbp.role.create', compact('organisation', 'users', 'role', 'mainModule'))->render()]);
+        return response()->json(['data' => view('rbp.role.create', compact('organisation', 'users', 'role', 'mainModule', 'selectedUsers'))->render()]);
     }
 
     /**
@@ -157,17 +159,16 @@ class RoleController extends Controller
      */
     public function edit(SysOrgaCtrls $organisation, Request $request)
     {
-        $mainModule = MainModule::find($request->mainModule); // Replace with actual main module ID
+        dd($request->all());
+        $mainModule = SysModuMains::find($request->mainModule);
 
         $role = Role::find($request->role_id);
 
         $users = SysUsrmUsers::get();
 
-        $userCounter = 0;
-        
-        $selectedUsers = $role->users->pluck('id')->toArray() ?? [];
+        $selectedUsers = $role->user_ids ?? [];
 
-        return response()->json(['data' => view('rbp.perm.create', compact('organisation', 'mainModule', 'role', 'users'))->render()]);
+        return response()->json(['data' => view('rbp.role.create', compact('organisation', 'mainModule', 'role', 'users', 'selectedUsers'))->render()]);
     }
 
     /**
