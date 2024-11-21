@@ -57,6 +57,7 @@
     $("#addForm").submit(function(event) {
     event.preventDefault();
 
+
     let table = $('#InvoiceDataTable').DataTable();
     let tableData = table.rows().data().toArray();
 
@@ -100,7 +101,7 @@
     fetchTemplateCSV()
     .then(templateHeaders => {
         let csvData = generateCSVFromTableData(filteredData, templateHeaders);
-        downloadCSV(csvData);  // Trigger CSV download
+        downloadCSV(csvData, submitButton, spinner);  // Trigger CSV download
     })
     .catch(error => {
         console.error("Error fetching template CSV:", error);
@@ -207,7 +208,7 @@ function generateCSVFromTableData(tableData, templateHeaders) {
 //     downloadLink.click();
 // }
 
-function downloadCSV(csvData) {
+function downloadCSV(csvData, submitButton, spinner) {
     // Send the CSV data to the server to be saved in a folder
     $.ajax({
         method: "POST",
@@ -217,20 +218,31 @@ function downloadCSV(csvData) {
             _token: '{{ csrf_token() }}',
             csvData: csvData 
         },
-        success: function(response) {
-            let submitButton = $("#addForm").find('button[type="submit"]');
-            let spinner = submitButton.find('.spinner-border');
-            spinner.addClass('d-none');
-            submitButton.prop('disabled', false);
-            alert(response.message); // Display success message
-        },
-        error: function(xhr, status, error) {
-            let submitButton = $("#addForm").find('button[type="submit"]');
-            let spinner = submitButton.find('.spinner-border');
-            spinner.addClass('d-none');
-            submitButton.prop('disabled', false);
-            console.error("Error saving CSV:", error);
-        }
+        success: function(d) {
+                // Hide the spinner
+                spinner.addClass('d-none');
+                submitButton.prop('disabled', false);
+
+                if (d.status === 2) { 
+
+                    $("#modal").modal('hide');
+
+                    // InvoiceDataTable.ajax.reload();
+                    
+                    toast(2, d.message);
+
+                } else if (d.status === 1) {
+                    let errorMessages = d.errors.map(error => `Error: ${error}`).join('<br>');
+                    toast(1, errorMessages);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Hide the spinner
+                spinner.addClass('d-none');
+                submitButton.prop('disabled', false);
+
+                toast(1,"Error:", xhr.status, status, error);
+            }
     });
 }
 
