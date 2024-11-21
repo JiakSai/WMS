@@ -44,7 +44,7 @@
                 
                 {{-- <th>created_by</th>
                 <th>updated_by</th> --}}
-                <th>File Name</th>
+                <th>File Namef</th>
                 <th>Uploaded By</th>
                 <th>Uploaded On</th>
                 <th class="text-center">Action</th>
