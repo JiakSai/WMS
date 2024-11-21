@@ -157,11 +157,8 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SysOrgaCtrls $organisation, Request $request)
+    public function edit(SysOrgaCtrls $organisation, SysModuMains $mainModule, Request $request)
     {
-        dd($request->all());
-        $mainModule = SysModuMains::find($request->mainModule);
-
         $role = Role::find($request->role_id);
 
         $users = SysUsrmUsers::get();
